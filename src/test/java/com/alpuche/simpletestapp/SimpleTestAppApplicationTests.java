@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -25,6 +26,8 @@ class SimpleTestAppApplicationTests {
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 
+	@Autowired
+	private Environment env;
 	private MockMvc mockMvc;
 
 	@BeforeEach
@@ -39,8 +42,9 @@ class SimpleTestAppApplicationTests {
 
 	@ParameterizedTest
 	@ValueSource(strings = {"property1", "property2"})
-	void testProperties(@Value("${propertyName}") String propertyValue) {
-		assertNotNull(propertyValue);
+	void testProperties(String propertyName) {
+		String propertyValue = env.getProperty(propertyName);
+		assertNotNull(propertyValue, "El valor de la propiedad no debe ser nulo para: " + propertyName);
 	}
 
 	@ParameterizedTest
